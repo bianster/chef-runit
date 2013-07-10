@@ -92,8 +92,11 @@ class Chef
           end
           load_new_resource_state
           @new_resource.enabled(true)
-          restart_service if @new_resource.restart_on_update and run_script.updated_by_last_action?
-          restart_log_service if @new_resource.restart_on_update and log_run_script.updated_by_last_action?
+          
+          unless ::File.exists?(::File.join(service_dir_name, 'down'))
+            restart_service if @new_resource.restart_on_update and run_script.updated_by_last_action?
+            restart_log_service if @new_resource.restart_on_update and log_run_script.updated_by_last_action?
+          end
         end
 
         def configure_service
